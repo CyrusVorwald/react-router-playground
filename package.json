@@ -32,7 +32,7 @@
     "react-dom": "^19.0.0",
     "react-router": "^7.1.1",
     "remix-auth": "^4.1.0",
-    "remix-auth-totp": "file:/Users/cyrusvorwald/dev/remix-auth-totp",
+    "remix-auth-totp": "github:CyrusVorwald/remix-auth-totp#feat/remix-auth-v4",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7"
   },
