@@ -1,100 +1,101 @@
-# Welcome to React Router!
+# React Router Playground
 
-A modern, production-ready template for building full-stack React applications using React Router.
+## Authentication Flow
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+1. User enters their email address
+2. System generates a TOTP code and magic link
+3. Server console logs the user's email, the code, and the magic link. In production, this would instead send to the user's email
+4. User can either:
+   - Click the magic link to automatically verify
+   - Enter the 6-digit code manually
+5. Upon successful verification:
+   - User account is created if it doesn't exist
+   - Session is established
+   - User is redirected to dashboard
 
-## Features
+The UI informs the user of state, such as if the code is incorrect, expired, or is accessed from another browser.
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+## Environment Variables
+
+Create a `.env` file in the root directory with the following variables:
+
+```bash
+DATABASE_URL="postgresql://user:password@host:port/database"
+SESSION_SECRET="generate-a-secure-random-string"
+TOTP_SECRET="generate-a-64-character-hex-string"
+```
+
+### Generating Secure Keys
+
+Generate a secure TOTP secret (64 character hex string):
+```bash
+node -e "console.log(crypto.randomBytes(32).toString('hex'))"
+```
+
+Generate a session secret:
+```bash
+node -e "console.log(crypto.randomBytes(32).toString('base64url'))"
+```
 
 ## Getting Started
 
-### Installation
+1. Clone the repository:
+```bash
+git clone https://github.com/cyrusvorwald/react-router-playground.git
+cd react-router-playground
+```
 
-Install the dependencies:
-
+2. Install dependencies:
 ```bash
 npm install
 ```
 
-### Development
+3. Set up your environment variables as described above
 
-Start the development server with HMR:
+4. Run database migrations:
+```bash
+npm run db:migrate
+```
 
+5. Start the development server:
 ```bash
 npm run dev
 ```
 
 Your application will be available at `http://localhost:5173`.
 
-## Building for Production
+## Database Setup
 
-Create a production build:
+This template uses [Drizzle ORM](https://orm.drizzle.team) with PostgreSQL. The schema includes:
 
+- Users table with email and timestamps
+- Built-in migrations support
+- Type-safe database queries
+
+To modify the schema:
+1. Edit `app/db/schema.ts`
+2. Generate migrations:
 ```bash
-npm run build
+npm run db:generate
 ```
-
-## Deployment
-
-### Docker Deployment
-
-This template includes three Dockerfiles optimized for different package managers:
-
-- `Dockerfile` - for npm
-- `Dockerfile.pnpm` - for pnpm
-- `Dockerfile.bun` - for bun
-
-To build and run using Docker:
-
+3. Apply migrations:
 ```bash
-# For npm
-docker build -t my-app .
-
-# For pnpm
-docker build -f Dockerfile.pnpm -t my-app .
-
-# For bun
-docker build -f Dockerfile.bun -t my-app .
-
-# Run the container
-docker run -p 3000:3000 my-app
+npm run db:migrate
 ```
 
-The containerized application can be deployed to any platform that supports Docker, including:
+## Development
 
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
-
-### DIY Deployment
-
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
+### File Structure
 
 ```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
+app/
+├── components/     # Reusable UI components
+│   ├── auth/      # Authentication-related components
+│   └── ui/        # shadcn/ui components
+├── constants/     # Auth error codes
+├── db/           # Database configuration and schema
+├── hooks/        # React hooks
+├── lib/          # Utility functions
+├── routes/       # Route components and handlers
+└── services/     # Server functions
 ```
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
-
----
-
-Built with ❤️ using React Router.

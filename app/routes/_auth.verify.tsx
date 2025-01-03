@@ -111,8 +111,6 @@ export async function action({ request }: Route.ActionArgs) {
 export default function VerifyPage() {
   const loaderData = useLoaderData<typeof loader>();
 
-  console.log(loaderData);
-
   const code = "code" in loaderData ? loaderData.code : undefined;
   const email = "email" in loaderData ? loaderData.email : undefined;
   const error = "error" in loaderData ? loaderData.error : null;
