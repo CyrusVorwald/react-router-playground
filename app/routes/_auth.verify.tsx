@@ -69,7 +69,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 
       // Check if the user is accessing from another browser
       if (!totpCookie) {
-        return { differentBrowser: true, code: params.code };
+        return { error: AUTH_ERRORS.MISSING_SESSION_EMAIL, code: params.code };
       }
     } catch (error) {
       return { error: AUTH_ERRORS.INVALID_MAGIC_LINK };
@@ -103,7 +103,16 @@ export async function action({ request }: Route.ActionArgs) {
   try {
     return await authenticator.authenticate("TOTP", request);
   } catch (error) {
-    if (error instanceof Response) return error;
+    if (error instanceof Response) {
+      const cookie = new Cookie(error.headers.get("Set-Cookie") || "");
+      const totpCookie = cookie.get("_totp");
+      if (totpCookie) {
+        const params = new URLSearchParams(totpCookie);
+        return { error: params.get("error") };
+      }
+
+      throw error;
+    }
     return { error: AUTH_ERRORS.INVALID_TOTP };
   }
 }
